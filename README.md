@@ -35,7 +35,7 @@ This pipeline is exceptionally well-suited for social media applications that ha
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Selfie / Portrait** | JPEG | 1.2 MB | ~150 KB | **~87%** | Aggressive background blur; subject masked & preserved perfectly. |
 | **Group Photo** (3+ faces)| JPEG | 1.5 MB | ~350 KB | **~76%** | Smart bypass triggered (blur disabled) to ensure all faces remain sharp. |
-| **Text-Heavy / Poster** | PNG | 3.5 MB | ~400 KB | **~88%** | Smart bypass triggered; text bounding boxes recognized and preserved. |
+| **Text-Heavy / Poster** | JPEG | 2.5 MB | ~400 KB | **~84%** | Smart bypass triggered; text bounding boxes recognized and preserved. |
 | **Standard Scenery** | JPEG | 1.8 MB | ~250 KB | **~86%** | Moderate background blur applied outside of primary subject area. |
 
 ## How to Test It
