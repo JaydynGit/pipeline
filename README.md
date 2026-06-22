@@ -30,9 +30,12 @@ This pipeline is exceptionally well-suited for social media applications that ha
 #### The "Selfie" Impact at Scale
 Selfies and single-person portraits represent a significant portion of visual content on social platforms. Estimates indicate that selfies account for roughly 30% to 40% of all photos uploaded to platforms like Instagram, with single-person photos making up the bulk of personal content. 
 
-If a platform receives 100 million uploads a day, ~35 million of those are selfies. Without this pipeline, storing 35 million standard 1.2 MB JPEGs costs **~42 Terabytes** of storage per day. By utilizing this pipeline's background blur and WebP encoding (achieving an 83% file size reduction), the storage footprint drops to just **~7 Terabytes** per day. 
+If a platform receives 100 million uploads a day, ~35 million of those are selfies. Here is how the storage costs break down:
+1. **Raw Uploads**: Storing 35 million original 1.2 MB JPEGs costs **~42 Terabytes** of storage per day.
+2. **Standard Industry Compression**: Traditional platforms (like Instagram) scale images to 1080p and apply standard compression, reducing them to roughly ~500 KB. This costs **~17.5 Terabytes** per day.
+3. **With This Pipeline**: By utilizing content-aware background blurring and dynamic WebP encoding, the file size drops to just ~200 KB. This costs only **~7 Terabytes** per day.
 
-Over the course of a single year, implementing this pipeline would save a company over **12.7 Petabytes** of server storage and massive CDN bandwidth costs on selfies alone.
+Compared to standard industry compression, this pipeline saves an *additional* **10.5 Terabytes** per day. Over the course of a single year, implementing this pipeline would save a company an extra **~3.8 Petabytes** of server storage and CDN bandwidth on selfies alone—above and beyond what standard compression already achieves.
 
 ### Typical Compression Results
 
