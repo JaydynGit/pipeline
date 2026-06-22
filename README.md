@@ -27,6 +27,13 @@ This pipeline is exceptionally well-suited for social media applications that ha
 - **Improved User Experience**: Smaller file sizes mean faster upload times for creators and near-instant loading times for consumers scrolling through their feeds, especially on slower cellular networks.
 - **Content-Aware Preservation**: Unlike naive compression that aggressively crushes the entire image (often ruining memes, screenshots, or text-heavy posts), this system understands *what* it's compressing. Memes stay readable, and group photos keep everyone's face sharp.
 
+#### The "Selfie" Impact at Scale
+Selfies and single-person portraits represent a significant portion of visual content on social platforms. Estimates indicate that selfies account for roughly 30% to 40% of all photos uploaded to platforms like Instagram, with single-person photos making up the bulk of personal content. 
+
+If a platform receives 100 million uploads a day, ~35 million of those are selfies. Without this pipeline, storing 35 million standard 1.2 MB JPEGs costs **~42 Terabytes** of storage per day. By utilizing this pipeline's background blur and WebP encoding (achieving an 83% file size reduction), the storage footprint drops to just **~7 Terabytes** per day. 
+
+Over the course of a single year, implementing this pipeline would save a company over **12.7 Petabytes** of server storage and massive CDN bandwidth costs on selfies alone.
+
 ### Typical Compression Results
 
 *Note: The following metrics are estimated averages based on typical real-world images scaled to the 1080p processing baseline.*
