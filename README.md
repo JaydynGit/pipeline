@@ -33,10 +33,10 @@ This pipeline is exceptionally well-suited for social media applications that ha
 
 | Image Category | Original Format | Avg. Original Size | Compressed Size (Pipeline WebP) | Size Reduction (%) | Pipeline Action Taken |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Selfie / Portrait** | JPEG | 1.2 MB | ~150 KB | **~87%** | Aggressive background blur; subject masked & preserved perfectly. |
-| **Group Photo** (3+ faces)| JPEG | 1.5 MB | ~350 KB | **~76%** | Smart bypass triggered (blur disabled) to ensure all faces remain sharp. |
-| **Text-Heavy / Poster** | JPEG | 2.5 MB | ~400 KB | **~84%** | Smart bypass triggered; text bounding boxes recognized and preserved. |
-| **Standard Scenery** | JPEG | 1.8 MB | ~250 KB | **~86%** | Moderate background blur applied outside of primary subject area. |
+| **Selfie / Portrait** | JPEG | 1.2 MB | ~200 KB | **~83%** | Aggressive background blur; subject masked & preserved perfectly. |
+| **Group Photo** (3+ faces)| JPEG | 1.5 MB | ~850 KB | **~43%** | Smart bypass triggered (blur disabled) to ensure all faces remain sharp. |
+| **Text-Heavy / Poster** | JPEG | 1.2 MB | ~650 KB | **~45%** | Smart bypass triggered; text bounding boxes recognized and preserved. |
+| **Standard Scenery** | JPEG | 1.8 MB | ~1.1 MB | **~38%** | Smart bypass triggered (low subject confidence); no blur applied. |
 
 ## How to Test It
 
