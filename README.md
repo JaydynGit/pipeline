@@ -10,13 +10,13 @@ The core of this project is a highly sophisticated, content-aware image compress
 
 ### How It Works
 
-1. **Smart Concurrency & Baseline Scaling**: The pipeline dynamically detects the device's hardware capabilities (core count) to adjust processing concurrency, preventing memory crashes. Images are decoded, EXIF orientation is baked in, and they are scaled to a 1080p baseline using a separate isolate for performance.
+1. **Native OS Baseline Scaling**: The pipeline natively scales images to a high-quality 1080p JPEG baseline using highly optimized OS-level libraries. This native approach completely eliminates aliasing and pixelation artifacts when downscaling, inherently prevents upscaling of small images (like those from WhatsApp), and processes incredibly fast without taxing the main Dart thread.
 2. **Multi-Model Machine Learning Analysis**: Using Google ML Kit, the system runs four models concurrently:
    - **Subject Segmentation**: Generates a foreground confidence mask to separate the primary subject from the background.
    - **Text Recognition**: Detects and extracts bounding boxes for any text within the image.
    - **Image Labeling**: Identifies the context of the image (e.g., classifying it as "art", "poster", or "illustration").
    - **Face Detection**: Counts the number of faces in the photo to identify group shots.
-3. **Dynamic Quality & Smart Bypass**: The WebP compression quality dynamically scales based on the percentage of the image occupied by the primary subject. Crucially, the system includes a "Smart Bypass": if an image is detected as a poster/art, a group photo (3+ faces), or lacks a clear subject, it bypasses background blurring to protect UI icons, artistic details, and background context.
+3. **Dynamic Quality & Smart Bypass**: The WebP compression quality dynamically scales between 70 and 88 based on the percentage of the image occupied by the primary subject. This hyper-optimized range yields massive file size reductions for social media while keeping subjects crystal clear. Crucially, the system includes a "Smart Bypass": if an image is detected as a poster/art, a group photo (3+ faces), or lacks a clear subject, it bypasses background blurring to protect UI icons, artistic details, and background context.
 4. **GPU Compositing (Selective Blurring)**: For standard images, the pipeline uses hardware-accelerated `dart:ui` drawing to slightly blur the background while keeping the segmented foreground subject and any detected text boxes perfectly sharp. This reduces the high-frequency detail in the background, allowing the final WebP encoder to compress the image much more efficiently without degrading the perceived quality of the subject.
 5. **WebP Compression**: The final composited image is encoded into the WebP format, yielding massive file size savings.
 

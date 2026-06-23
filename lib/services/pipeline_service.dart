@@ -1,11 +1,9 @@
 import 'dart:io';
-import 'dart:isolate';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 import 'package:google_mlkit_subject_segmentation/google_mlkit_subject_segmentation.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:ui' as ui;
@@ -43,42 +41,30 @@ class PipelineService {
       final tempDir = await getTemporaryDirectory();
       final uuid = const Uuid().v4();
       
-      final baselinePath = '${tempDir.path}/${uuid}_baseline.png';
+      final baselinePath = '${tempDir.path}/${uuid}_baseline.jpg';
       final resizedPath = '${tempDir.path}/${uuid}_resized.png';
       
-      // Step 1: Decode, bake EXIF, and scale to 1080p (Isolate)
-      final baselineIsolateResult = await Isolate.run<List<int>?>(() {
-        try {
-          final originalBytes = File(originalPath).readAsBytesSync();
-          img.Image? decoded = img.decodeImage(originalBytes);
-          if (decoded == null) return null;
-          
-          decoded = img.bakeOrientation(decoded);
-          
-          int targetWidth;
-          int targetHeight;
-          if (decoded.width > decoded.height) {
-            targetWidth = 1080;
-            targetHeight = (decoded.height * 1080 / decoded.width).round();
-          } else {
-            targetHeight = 1080;
-            targetWidth = (decoded.width * 1080 / decoded.height).round();
-          }
-
-          // Generate 1080p Baseline Image
-          img.Image baseline = img.copyResize(decoded, width: targetWidth, height: targetHeight, interpolation: img.Interpolation.cubic);
-          File(baselinePath).writeAsBytesSync(img.encodePng(baseline));
-          return [targetWidth, targetHeight];
-        } catch (e) {
-          // ignore: avoid_print
-          print('Baseline Isolate error: $e');
-          return null;
-        }
-      });
+      // Step 1: Decode, bake EXIF, and scale to 1080p natively using OS libraries
+      final baselineFile = await FlutterImageCompress.compressAndGetFile(
+        originalPath,
+        baselinePath,
+        format: CompressFormat.jpeg,
+        quality: 100, // 100% quality JPEG is visually lossless and extremely fast to encode
+        minWidth: 1080,
+        minHeight: 1080,
+      );
       
-      if (baselineIsolateResult == null) return null;
-      final int targetWidth = baselineIsolateResult[0];
-      final int targetHeight = baselineIsolateResult[1];
+      if (baselineFile == null) return null;
+
+      // Get the resulting dimensions of the baseline image
+      final Uint8List baselineBytes = await File(baselinePath).readAsBytes();
+      final ui.Codec baselineCodec = await ui.instantiateImageCodec(baselineBytes);
+      final ui.FrameInfo baselineFrame = await baselineCodec.getNextFrame();
+      final ui.Image decodedBaselineImage = baselineFrame.image;
+      
+      final int targetWidth = decodedBaselineImage.width;
+      final int targetHeight = decodedBaselineImage.height;
+      decodedBaselineImage.dispose(); // Free memory, we'll reload if needed for compositing
       
       // Step 2: ML Kit Subject Segmentation and Text Recognition
       final inputImage = InputImage.fromFilePath(baselinePath);
@@ -140,11 +126,11 @@ class PipelineService {
         textBoundingBoxes.add(block.boundingBox);
       }
       
-      int webpQuality = 90;
+      int webpQuality = 80;
       if (subjectPercentage < 0.3) {
-        webpQuality = 85;
+        webpQuality = 70;
       } else if (subjectPercentage > 0.7) {
-        webpQuality = 94;
+        webpQuality = 88;
       }
       
       // Check if image is a Poster or Art based on Image Labeling
