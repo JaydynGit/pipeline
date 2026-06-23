@@ -10,7 +10,7 @@ The core of this project is a highly sophisticated, content-aware image compress
 
 ### How It Works
 
-1. **Native OS Baseline Scaling**: The pipeline natively scales images to a high-quality 1080p JPEG baseline using highly optimized OS-level libraries. This native approach completely eliminates aliasing and pixelation artifacts when downscaling, inherently prevents upscaling of small images (like those from WhatsApp), and processes incredibly fast without taxing the main Dart thread.
+1. **Native OS Width-Locked Scaling**: The pipeline natively scales images to a high-quality JPEG baseline using highly optimized OS-level libraries. Crucially, the scaling uses a 1080x1920 bounding box to **lock the width to 1080 pixels**. This native approach completely eliminates aliasing and pixelation artifacts when downscaling, inherently prevents upscaling of small images (like those from WhatsApp), and ensures that tall portrait selfies (3x4 or 9x16) are never squashed or forced to stretch on modern smartphone screens.
 2. **Multi-Model Machine Learning Analysis**: Using Google ML Kit, the system runs four models concurrently:
    - **Subject Segmentation**: Generates a foreground confidence mask to separate the primary subject from the background.
    - **Text Recognition**: Detects and extracts bounding boxes for any text within the image.

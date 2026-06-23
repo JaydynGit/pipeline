@@ -72,6 +72,26 @@ class ResultsScreen extends ConsumerWidget {
                     fontSize: 14,
                   ),
                 ),
+                const SizedBox(height: 6),
+                Builder(
+                  builder: (context) {
+                    String formatBytes(int bytes) {
+                      if (bytes < 1024) return '$bytes B';
+                      if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+                      return '${(bytes / (1024 * 1024)).toStringAsFixed(2)} MB';
+                    }
+                    int oSize = 0;
+                    int cSize = 0;
+                    try {
+                      oSize = File(detail.originalPath).lengthSync();
+                      cSize = File(detail.compressedPath).lengthSync();
+                    } catch (_) {}
+                    return Text(
+                      'Size: ${formatBytes(oSize)} ➔ ${formatBytes(cSize)}',
+                      style: const TextStyle(color: Colors.white54, fontSize: 12),
+                    );
+                  }
+                ),
               ],
             ),
           ),

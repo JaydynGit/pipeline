@@ -44,14 +44,16 @@ class PipelineService {
       final baselinePath = '${tempDir.path}/${uuid}_baseline.jpg';
       final resizedPath = '${tempDir.path}/${uuid}_resized.png';
       
-      // Step 1: Decode, bake EXIF, and scale to 1080p natively using OS libraries
+      // Step 1: Decode, bake EXIF, and scale natively using OS libraries
+      // We set a bounding box of 1080x1920. This forces the width to almost always 
+      // be exactly 1080 pixels, meaning portrait photos no longer lose their sharpness!
       final baselineFile = await FlutterImageCompress.compressAndGetFile(
         originalPath,
         baselinePath,
         format: CompressFormat.jpeg,
         quality: 100, // 100% quality JPEG is visually lossless and extremely fast to encode
         minWidth: 1080,
-        minHeight: 1080,
+        minHeight: 1920, // Increased to 1920 to allow tall portrait images to stay 1080px wide
       );
       
       if (baselineFile == null) return null;
@@ -176,16 +178,18 @@ class PipelineService {
         final ui.Canvas canvas = ui.Canvas(recorder);
         
         // 1. Draw blurred background
+        // A subtle blur (sigma 1.0) is virtually invisible to the eye but still smooths
+        // out micro-noise, allowing WebP to compress the background highly efficiently.
         final ui.Paint backgroundPaint = ui.Paint()
-          ..imageFilter = ui.ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5);
+          ..imageFilter = ui.ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0);
         canvas.drawImage(baselineImage, Offset.zero, backgroundPaint);
         
         // 2. Draw sharp foreground using saveLayer and SrcIn
         canvas.saveLayer(null, ui.Paint());
         
-        // Feather the mask
+        // Feather the mask slightly to blend the sharp subject into the subtle background
         final ui.Paint maskPaint = ui.Paint()
-          ..imageFilter = ui.ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0);
+          ..imageFilter = ui.ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5);
         canvas.drawImage(maskImage, Offset.zero, maskPaint);
         
         // Protect Text Regions by drawing them opaque on the mask layer
