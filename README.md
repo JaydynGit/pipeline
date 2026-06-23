@@ -25,6 +25,7 @@ The core of this project is a highly sophisticated, content-aware image compress
 This pipeline is exceptionally well-suited for social media applications that handle millions of image uploads daily:
 - **Bandwidth & Storage Savings**: By selectively blurring backgrounds (which users naturally pay less attention to) and preserving subjects/text, platforms can achieve aggressive WebP compression rates, saving petabytes of server storage and drastically cutting CDN bandwidth costs.
 - **Improved User Experience**: Smaller file sizes mean faster upload times for creators and near-instant loading times for consumers scrolling through their feeds, especially on slower cellular networks.
+- **Flawless Aspect Ratio Support**: By utilizing native Width-Locking scaling, the system natively supports any portrait orientation (like Instagram's strict 4:5 or standard 3:4/9:16 cameras). The width remains locked to a perfectly sharp 1080px, meaning portrait selfies are never squashed or stretched on the feed.
 - **Content-Aware Preservation**: Unlike naive compression that aggressively crushes the entire image (often ruining memes, screenshots, or text-heavy posts), this system understands *what* it's compressing. Memes stay readable, and group photos keep everyone's face sharp.
 
 #### The "Selfie" Impact at Scale
